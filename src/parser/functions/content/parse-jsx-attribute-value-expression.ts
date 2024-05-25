@@ -3,9 +3,10 @@ import { v4 } from "uuid";
 import type { Content } from "../../types/content";
 import { parseArrayExpression } from "./parse-array-expression";
 import { parseBinaryExpression } from "./parse-binary-expression";
+import { parseCallExpression } from "./parse-call-expression";
+import { parseMemberExpression } from "./parse-member-expression";
 import { parseObjectExpression } from "./parse-object-expression";
 import { parseTemplateLiteral } from "./parse-template-literal";
-import { parseMemberExpression } from "./parse-member-expression";
 
 export function parseJsxAttributeValueExpression(expr: Expression | JSXEmptyExpression): Content {
   if (expr.type === "JSXEmptyExpression") {
@@ -86,6 +87,15 @@ export function parseJsxAttributeValueExpression(expr: Expression | JSXEmptyExpr
         }
       ],
       text: `="${id}"`,
+    };
+  }
+
+  if (expr.type === "CallExpression") {
+    const out = parseCallExpression(expr);
+
+    return {
+      args: out.args,
+      text: `="${out.text}"`,
     };
   }
 
