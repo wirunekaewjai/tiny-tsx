@@ -70,7 +70,7 @@ export async function parse(srcDir: string, configs: Config[]) {
           recursive: true,
         });
 
-        const attach = config.attachOriginal ? `\n/*\n${data[0]}\n*/` : "";
+        const attach = config.attachOriginal ? `\n/*\n${data[0]}\n*/\n` : "";
         const output = "// AUTO GENERATED\n" + code + attach;
         await writeFile(outPath, output, "utf8");
 
