@@ -1,7 +1,7 @@
 import type { ArgumentPlaceholder, Expression, SpreadElement } from "@babel/types";
 import { parseMemberExpression } from "./parse-member-expression";
 
-export function parseCallExpressionMacroJson(expr: Expression | SpreadElement | ArgumentPlaceholder): string {
+export function parseCallExpressionMacroQuot(expr: Expression | SpreadElement | ArgumentPlaceholder): string {
   if (expr.type === "Identifier") {
     return expr.name;
   }

@@ -90,17 +90,11 @@ function buildContentObject(content: Content) {
     }
 
     else if (arg.type === "MacroMap") {
-      args.push(`tsx_map(${arg.value.items}, &|${arg.value.item}| ${buildContent(arg.value.content)})`);
+      args.push(`tsx_map(&${arg.value.items}, &|${arg.value.item}| ${buildContent(arg.value.content)})`);
     }
 
-    else if (arg.type === "MacroJson") {
-      if (arg.value.pretty) {
-        args.push(`tsx_json_pretty(${arg.value.item})`);
-      }
-
-      else {
-        args.push(`tsx_json(${arg.value.item})`);
-      }
+    else if (arg.type === "MacroQuot") {
+      args.push(`tsx_quot(&${arg.value})`);
     }
 
     else {
@@ -136,17 +130,11 @@ function buildContent(content: Content) {
     }
 
     else if (arg.type === "MacroMap") {
-      args.push(`tsx_map(${arg.value.items}, &|${arg.value.item}| ${buildContent(arg.value.content)})`);
+      args.push(`tsx_map(&${arg.value.items}, &|${arg.value.item}| ${buildContent(arg.value.content)})`);
     }
 
-    else if (arg.type === "MacroJson") {
-      if (arg.value.pretty) {
-        args.push(`tsx_json_pretty(serde_json::json!(${arg.value.item}))`);
-      }
-
-      else {
-        args.push(`tsx_json(serde_json::json!(${arg.value.item}))`);
-      }
+    else if (arg.type === "MacroQuot") {
+      args.push(`tsx_quot(&${arg.value})`);
     }
 
     else {
@@ -159,14 +147,6 @@ function buildContent(content: Content) {
 
 function buildImports(content: string) {
   const uses: string[] = [];
-
-  if (content.includes("tsx_json_pretty(")) {
-    uses.push("tsx_json_pretty");
-  }
-
-  if (content.includes("tsx_json(")) {
-    uses.push("tsx_json");
-  }
 
   if (content.includes("tsx_map(")) {
     uses.push("tsx_map");

@@ -1,8 +1,8 @@
 import type { ArrowFunctionExpression, CallExpression, Identifier } from "@babel/types";
 import { v4 } from "uuid";
 import type { Content } from "../../types/content";
-import { parseCallExpressionMacroJson } from "./parse-call-expression-macro-json";
 import { parseCallExpressionMacroMap } from "./parse-call-expression-macro-map";
+import { parseCallExpressionMacroQuot } from "./parse-call-expression-macro-quot";
 
 export function parseCallExpression(expr: CallExpression): Content {
   const callee = expr.callee;
@@ -34,18 +34,15 @@ export function parseCallExpression(expr: CallExpression): Content {
       };
     }
 
-    if (callee.name === "json" || callee.name === "json_pretty") {
+    if (callee.name === "quot") {
       const id = v4();
 
       return {
         args: [
           {
-            type: "MacroJson",
+            type: "MacroQuot",
             id,
-            value: {
-              item: parseCallExpressionMacroJson(args[0]),
-              pretty: callee.name === "json_pretty",
-            },
+            value: parseCallExpressionMacroQuot(args[0]),
           }
         ],
         text: id,

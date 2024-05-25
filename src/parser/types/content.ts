@@ -10,7 +10,7 @@ export type ContentArg =
   ContentArgObjectExpression |
   ContentArgTemplateLiteral |
   ContentArgMacroMap |
-  ContentArgMacroJson;
+  ContentArgMacroQuot;
 
 export interface ContentArgArrayExpression {
   type: "ArrayExpression";
@@ -52,11 +52,8 @@ export interface ContentArgMacroMap {
   };
 }
 
-export interface ContentArgMacroJson {
-  type: "MacroJson";
+export interface ContentArgMacroQuot {
+  type: "MacroQuot";
   id: string;
-  value: {
-    item: string;
-    pretty: boolean;
-  };
+  value: string;
 }

@@ -75,14 +75,8 @@ function buildContent(content: Content) {
       text = text.replace(arg.id, `\${tsx_map(${arg.value.items}, (${arg.value.item}) => \`${buildContent(arg.value.content)}\`)}`);
     }
 
-    else if (arg.type === "MacroJson") {
-      if (arg.value.pretty) {
-        text = text.replace(arg.id, `\${tsx_json_pretty(${arg.value.item})}`);
-      }
-
-      else {
-        text = text.replace(arg.id, `\${tsx_json(${arg.value.item})}`);
-      }
+    else if (arg.type === "MacroQuot") {
+      text = text.replace(arg.id, `\${tsx_quot(${arg.value})}`);
     }
 
     else {
@@ -95,14 +89,6 @@ function buildContent(content: Content) {
 
 function buildImports(content: string) {
   const uses: string[] = [];
-
-  if (content.includes("tsx_json_pretty(")) {
-    uses.push("tsx_json_pretty");
-  }
-
-  if (content.includes("tsx_json(")) {
-    uses.push("tsx_json");
-  }
 
   if (content.includes("tsx_map(")) {
     uses.push("tsx_map");
