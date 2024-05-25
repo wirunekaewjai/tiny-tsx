@@ -31,7 +31,7 @@ function buildInterfaceProperty(property: StructProperty) {
 function buildInterfaces(structs: Struct[]) {
   const items = structs.map((struct) => {
     const properties = struct.properties.map(buildInterfaceProperty);
-    return `interface ${struct.name} {\n${properties.join("\n")}\n}\n`;
+    return `export interface ${struct.name} {\n${properties.join("\n")}\n}\n`;
   });
 
   const suffix = items.length > 0 ? "\n" : "";
@@ -52,25 +52,11 @@ function buildContent(content: Content) {
   content.args.forEach((arg) => {
     if (arg.type === "Identifier" || arg.type === "Expression") {
       text = text.replace(arg.id, "${" + arg.value + "}");
-      // if (depth > 0) {
-      //   text = text.replace(arg.id, arg.value);
-      // }
-
-      // else {
-      //   text = text.replace(arg.id, "${" + arg.value + "}");
-      // }
     }
 
     // TemplateLiteral always inside ObjectExpression | ArrayExpression
     else if (arg.type === "TemplateLiteral") {
       text = text.replace(arg.id, `"${buildContent(arg.value)}"`);
-      // if (depth > 0) {
-      //   text = text.replace(arg.id, `"${buildContent(arg.value, 0)}"`);
-      // }
-
-      // else {
-      //   text = text.replace(arg.id, `\`${buildContent(arg.value, 0)}\``);
-      // }
     }
 
     else {
