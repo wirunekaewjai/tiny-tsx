@@ -9,6 +9,7 @@ export type ContentArg =
   ContentArgExpression |
   ContentArgObjectExpression |
   ContentArgTemplateLiteral |
+  ContentArgMacroJoin |
   ContentArgMacroMap |
   ContentArgMacroQuot;
 
@@ -40,6 +41,12 @@ export interface ContentArgTemplateLiteral {
   type: "TemplateLiteral";
   id: string;
   value: Content;
+}
+
+export interface ContentArgMacroJoin {
+  type: "MacroJoin";
+  id: string;
+  value: string;
 }
 
 export interface ContentArgMacroMap {

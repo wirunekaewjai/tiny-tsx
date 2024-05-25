@@ -14,6 +14,7 @@ export declare global {
   export type f32 = number;
   export type f64 = number;
 
-  export declare function quot(item: string): string;
+  export declare function join<T>(items: T[]): string;
   export declare function map<T>(items: T[], render: (item: T) => object | string): string;
+  export declare function quot(item: string): string;
 }

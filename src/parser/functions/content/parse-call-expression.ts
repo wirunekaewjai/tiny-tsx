@@ -1,6 +1,7 @@
 import type { ArrowFunctionExpression, CallExpression, Identifier } from "@babel/types";
 import { v4 } from "uuid";
 import type { Content } from "../../types/content";
+import { parseCallExpressionMacroJoin } from "./parse-call-expression-macro-join";
 import { parseCallExpressionMacroMap } from "./parse-call-expression-macro-map";
 import { parseCallExpressionMacroQuot } from "./parse-call-expression-macro-quot";
 
@@ -43,6 +44,21 @@ export function parseCallExpression(expr: CallExpression): Content {
             type: "MacroQuot",
             id,
             value: parseCallExpressionMacroQuot(args[0]),
+          }
+        ],
+        text: id,
+      };
+    }
+
+    if (callee.name === "join") {
+      const id = v4();
+
+      return {
+        args: [
+          {
+            type: "MacroJoin",
+            id,
+            value: parseCallExpressionMacroJoin(args[0]),
           }
         ],
         text: id,

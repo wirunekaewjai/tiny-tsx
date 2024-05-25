@@ -89,6 +89,10 @@ function buildContentObject(content: Content) {
       args.push(`tsx_quot(&${buildContent(arg.value)})`);
     }
 
+    else if (arg.type === "MacroJoin") {
+      args.push(`tsx_join(&${arg.value})`);
+    }
+
     else if (arg.type === "MacroMap") {
       args.push(`tsx_map(&${arg.value.items}, &|${arg.value.item}| ${buildContent(arg.value.content)})`);
     }
@@ -129,6 +133,10 @@ function buildContent(content: Content) {
       args.push(`tsx_quot(&${buildContent(arg.value)})`);
     }
 
+    else if (arg.type === "MacroJoin") {
+      args.push(`tsx_join(&${arg.value})`);
+    }
+
     else if (arg.type === "MacroMap") {
       args.push(`tsx_map(&${arg.value.items}, &|${arg.value.item}| ${buildContent(arg.value.content)})`);
     }
@@ -147,6 +155,10 @@ function buildContent(content: Content) {
 
 function buildImports(content: string) {
   const uses: string[] = [];
+
+  if (content.includes("tsx_join(")) {
+    uses.push("tsx_join");
+  }
 
   if (content.includes("tsx_map(")) {
     uses.push("tsx_map");
