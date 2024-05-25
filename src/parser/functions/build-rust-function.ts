@@ -67,12 +67,16 @@ function buildContentObject(content: Content) {
       args.push(buildContent(arg.value));
     }
 
-    else {
+    else if (arg.type === "ObjectExpression") {
       args.push(buildContentObject(arg.value));
+    }
+
+    else {
+      args.push(`esc_quot(&${buildContent(arg.value)})`);
     }
   });
 
-  return `esc_quot(format!(r#"{${text}}"#, ${args.join(", ")}))`;
+  return `esc_quot(&format!(r#"{${text}}"#, ${args.join(", ")}))`;
 }
 
 function buildContent(content: Content) {
@@ -96,7 +100,7 @@ function buildContent(content: Content) {
     }
 
     else {
-      args.push(`esc_quot(${buildContent(arg.value)})`);
+      args.push(`esc_quot(&${buildContent(arg.value)})`);
     }
   });
 
