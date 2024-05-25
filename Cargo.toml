@@ -1,0 +1,12 @@
+[package]
+name = "tiny-tsx"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "tiny_tsx"
+path = "src/macro-rs/lib.rs"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]

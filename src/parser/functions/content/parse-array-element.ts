@@ -1,0 +1,79 @@
+import type { Expression, SpreadElement } from "@babel/types";
+import { v4 } from "uuid";
+import type { Content } from "../../types/content";
+import { parseArrayExpression } from "./parse-array-expression";
+import { parseBinaryExpression } from "./parse-binary-expression";
+import { parseMemberExpression } from "./parse-member-expression";
+import { parseObjectExpression } from "./parse-object-expression";
+import { parseTemplateLiteral } from "./parse-template-literal";
+
+export function parseArrayElement(expr: Expression | SpreadElement | null, depth: number): Content {
+  if (expr === null) {
+    return {
+      args: [],
+      text: "null",
+    };
+  }
+
+  if (expr.type === "Identifier") {
+    const id = v4();
+
+    return {
+      args: [
+        {
+          type: "Identifier",
+          id,
+          value: expr.name,
+        },
+      ],
+      text: id,
+    };
+  }
+
+  if (expr.type === "StringLiteral") {
+    return {
+      args: [],
+      text: `"${expr.value}"`,
+    };
+  }
+
+  if (expr.type === "NumericLiteral" || expr.type === "BooleanLiteral") {
+    return {
+      args: [],
+      text: `${expr.value}`,
+    };
+  }
+
+  if (expr.type === "TemplateLiteral") {
+    return parseTemplateLiteral(expr, depth + 1);
+  }
+
+  if (expr.type === "ObjectExpression") {
+    return parseObjectExpression(expr, depth + 1);
+  }
+
+  else if (expr.type === "ArrayExpression") {
+    return parseArrayExpression(expr, depth + 1);
+  }
+
+  if (expr.type === "BinaryExpression") {
+    return parseBinaryExpression(expr);
+  }
+
+  if (expr.type === "MemberExpression") {
+    const id = v4();
+
+    return {
+      args: [
+        {
+          type: "Identifier",
+          id,
+          value: parseMemberExpression(expr),
+        }
+      ],
+      text: id,
+    };
+  }
+
+  throw `${__filename}: ${JSON.stringify(expr)}`;
+}

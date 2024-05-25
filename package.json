@@ -1,0 +1,22 @@
+{
+  "name": "@wirunekaewjai/ts",
+  "version": "0.0.3",
+  "type": "module",
+  "exports": {
+    "./jsx-dev-runtime": "./src/jsx/jsx-dev-runtime.ts",
+    "./jsx-runtime": "./src/jsx/jsx-runtime.ts",
+    "./macro": "./src/macro-ts/index.ts",
+    "./parser": "./src/parser/index.ts",
+    "./types.d.ts": "./src/types.d.ts"
+  },
+  "devDependencies": {
+    "@babel/parser": "^7.24.6",
+    "@babel/types": "^7.24.6",
+    "@types/bun": "latest",
+    "@types/uuid": "^9.0.8",
+    "uuid": "^9.0.1"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  }
+}
