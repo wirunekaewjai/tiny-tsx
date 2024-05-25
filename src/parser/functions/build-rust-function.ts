@@ -19,13 +19,13 @@ function getStructType(input: string) {
   }
 }
 
-function getParamType(input: string) {
+function getParamType(input: string, isArray: boolean) {
   switch (input) {
     case "boolean":
       return "bool";
 
     case "string":
-      return "&str";
+      return isArray ? "String" : "&str";
 
     case "number":
       return "f64";
@@ -56,7 +56,7 @@ function buildInterfaces(structs: Struct[]) {
 function buildParams(params: FunctionParam[]) {
   const items = params.map((param) => {
     const isArray = param.type.endsWith("[]");
-    const parsedType = isArray ? getParamType(param.type.slice(0, -2)) : getParamType(param.type);
+    const parsedType = isArray ? getParamType(param.type.slice(0, -2), true) : getParamType(param.type, false);
     const wrappedType = isArray ? `Vec<${parsedType}>` : parsedType;
 
     return `${param.name}: ${wrappedType}`;
