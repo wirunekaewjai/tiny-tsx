@@ -72,7 +72,7 @@ function buildContent(content: Content) {
     }
 
     else if (arg.type === "CallExpressionMapJSXElement") {
-      text = text.replace(arg.id, `\${map(${arg.value.items}, (${arg.value.item}) => \`${buildContent(arg.value.content)}\`)}`);
+      text = text.replace(arg.id, `\${render_array(${arg.value.items}, (${arg.value.item}) => \`${buildContent(arg.value.content)}\`)}`);
     }
 
     else {
@@ -84,14 +84,21 @@ function buildContent(content: Content) {
 }
 
 function buildImports(content: string) {
-  const lines: string[] = [];
+  const uses: string[] = [];
 
   if (content.includes("esc_quot(")) {
-    lines.push(`import { esc_quot } from "@wirunekaewjai/tiny-tsx/macro";\n`);
+    uses.push("esc_quot");
   }
 
-  const suffix = lines.length > 0 ? "\n" : "";
-  return lines.join("\n") + suffix;
+  if (content.includes("render_array(")) {
+    uses.push("render_array");
+  }
+
+  if (uses.length === 0) {
+    return "";
+  }
+
+  return `import { ${uses.join(", ")} } from "@wirunekaewjai/tiny-tsx/macro";\n\n`;
 }
 
 export function buildTypescriptFunction(fileName: string, namespace: string, props: {

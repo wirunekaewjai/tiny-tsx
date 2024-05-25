@@ -90,7 +90,7 @@ function buildContentObject(content: Content) {
     }
 
     else if (arg.type === "CallExpressionMapJSXElement") {
-      args.push(`map(${arg.value.items}, &|${arg.value.item}| ${buildContent(arg.value.content)})`);
+      args.push(`render_array(${arg.value.items}, &|${arg.value.item}| ${buildContent(arg.value.content)})`);
     }
 
     else {
@@ -126,7 +126,7 @@ function buildContent(content: Content) {
     }
 
     else if (arg.type === "CallExpressionMapJSXElement") {
-      args.push(`map(${arg.value.items}, &|${arg.value.item}| ${buildContent(arg.value.content)})`);
+      args.push(`render_array(${arg.value.items}, &|${arg.value.item}| ${buildContent(arg.value.content)})`);
     }
 
     else {
@@ -138,18 +138,25 @@ function buildContent(content: Content) {
 }
 
 function buildImports(content: string) {
-  const lines: string[] = [];
+  const uses: string[] = [];
 
   if (content.includes("esc_quot(")) {
-    lines.push(`use tiny_tsx::esc_quot;\n`);
+    uses.push("esc_quot");
   }
 
-  if (content.includes("map(")) {
-    lines.push(`use tiny_tsx::map;\n`);
+  if (content.includes("render_array(")) {
+    uses.push("render_array");
   }
 
-  const suffix = lines.length > 0 ? "\n" : "";
-  return lines.join("\n") + suffix;
+  if (uses.length === 0) {
+    return "";
+  }
+
+  if (uses.length === 1) {
+    return `use tiny_tsx::${uses[0]};\n\n`;
+  }
+
+  return `use tiny_tsx::{${uses.join(", ")}};\n\n`;
 }
 
 export function buildRustFunction(fileName: string, namespace: string, props: {

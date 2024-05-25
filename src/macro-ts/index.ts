@@ -2,7 +2,7 @@ export function esc_quot(input: string) {
   return input.replace(/"/g, "&quot;");
 }
 
-export function map<T>(items: T[], render: (item: T) => string): string {
+export function render_array<T>(items: T[], render: (item: T) => string): string {
   return items.map(render).join("");
 }
 
