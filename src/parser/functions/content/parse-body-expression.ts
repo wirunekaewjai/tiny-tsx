@@ -8,7 +8,7 @@ export function parseBodyExpression(expr: Expression | BlockStatement): Content 
     return parseJsxElement(expr);
   }
 
-  else if (expr.type === "JSXFragment") {
+  if (expr.type === "JSXFragment") {
     return parseJsxFragment(expr);
   }
 

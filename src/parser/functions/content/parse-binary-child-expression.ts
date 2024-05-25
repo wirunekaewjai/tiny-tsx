@@ -6,7 +6,11 @@ export function parseBinaryChildExpression(expr: Expression | PrivateName) {
     return expr.name;
   }
 
-  if (expr.type === "StringLiteral" || expr.type === "NumericLiteral" || expr.type === "BooleanLiteral") {
+  if (expr.type === "StringLiteral") {
+    return `"${expr.value}"`;
+  }
+
+  if (expr.type === "NumericLiteral" || expr.type === "BooleanLiteral") {
     return `${expr.value}`;
   }
 

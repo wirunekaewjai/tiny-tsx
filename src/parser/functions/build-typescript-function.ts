@@ -68,11 +68,21 @@ function buildContent(content: Content) {
     }
 
     else if (arg.type === "ObjectExpression" || arg.type === "ArrayExpression") {
-      text = text.replace(arg.id, `\${esc_quot(\`${buildContent(arg.value)}\`)}`);
+      text = text.replace(arg.id, `\${tsx_quot(\`${buildContent(arg.value)}\`)}`);
     }
 
-    else if (arg.type === "CallExpressionMapJSXElement") {
-      text = text.replace(arg.id, `\${render_array(${arg.value.items}, (${arg.value.item}) => \`${buildContent(arg.value.content)}\`)}`);
+    else if (arg.type === "MacroMap") {
+      text = text.replace(arg.id, `\${tsx_map(${arg.value.items}, (${arg.value.item}) => \`${buildContent(arg.value.content)}\`)}`);
+    }
+
+    else if (arg.type === "MacroJson") {
+      if (arg.value.pretty) {
+        text = text.replace(arg.id, `\${tsx_json_pretty(${arg.value.item})}`);
+      }
+
+      else {
+        text = text.replace(arg.id, `\${tsx_json(${arg.value.item})}`);
+      }
     }
 
     else {
@@ -86,12 +96,20 @@ function buildContent(content: Content) {
 function buildImports(content: string) {
   const uses: string[] = [];
 
-  if (content.includes("esc_quot(")) {
-    uses.push("esc_quot");
+  if (content.includes("tsx_json_pretty(")) {
+    uses.push("tsx_json_pretty");
   }
 
-  if (content.includes("render_array(")) {
-    uses.push("render_array");
+  if (content.includes("tsx_json(")) {
+    uses.push("tsx_json");
+  }
+
+  if (content.includes("tsx_map(")) {
+    uses.push("tsx_map");
+  }
+
+  if (content.includes("tsx_quot(")) {
+    uses.push("tsx_quot");
   }
 
   if (uses.length === 0) {

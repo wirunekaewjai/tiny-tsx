@@ -1,20 +1,20 @@
-import type { Expression, JSXEmptyExpression } from "@babel/types";
+import type { BlockStatement, Expression } from "@babel/types";
 import { v4 } from "uuid";
 import type { Content } from "../../types/content";
 import { parseArrayExpression } from "./parse-array-expression";
 import { parseBinaryExpression } from "./parse-binary-expression";
 import { parseIdentifier } from "./parse-identifier";
+import { parseJsxElement } from "./parse-jsx-element";
+import { parseJsxFragment } from "./parse-jsx-fragment";
 import { parseMemberExpression } from "./parse-member-expression";
 import { parseObjectExpression } from "./parse-object-expression";
 import { parseTemplateLiteral } from "./parse-template-literal";
-import { parseCallExpression } from "./parse-call-expression";
 
-export function parseJsxChildExpression(expr: Expression | JSXEmptyExpression): Content {
-  if (expr.type === "JSXEmptyExpression") {
-    // do nothing...
+export function parseCallExpressionMacroMap(expr: Expression | BlockStatement): Content {
+  if (expr === null) {
     return {
       args: [],
-      text: "",
+      text: "null",
     };
   }
 
@@ -22,7 +22,14 @@ export function parseJsxChildExpression(expr: Expression | JSXEmptyExpression): 
     return parseIdentifier(expr);
   }
 
-  if (expr.type === "StringLiteral" || expr.type === "NumericLiteral" || expr.type === "BooleanLiteral") {
+  if (expr.type === "StringLiteral") {
+    return {
+      args: [],
+      text: `"${expr.value}"`,
+    };
+  }
+
+  if (expr.type === "NumericLiteral" || expr.type === "BooleanLiteral") {
     return {
       args: [],
       text: `${expr.value}`,
@@ -60,8 +67,12 @@ export function parseJsxChildExpression(expr: Expression | JSXEmptyExpression): 
     };
   }
 
-  if (expr.type === "CallExpression") {
-    return parseCallExpression(expr);
+  if (expr.type === "JSXElement") {
+    return parseJsxElement(expr);
+  }
+
+  if (expr.type === "JSXFragment") {
+    return parseJsxFragment(expr);
   }
 
   throw `${__filename}: ${JSON.stringify(expr)}`;

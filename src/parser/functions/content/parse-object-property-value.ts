@@ -3,24 +3,14 @@ import { v4 } from "uuid";
 import type { Content } from "../../types/content";
 import { parseArrayExpression } from "./parse-array-expression";
 import { parseBinaryExpression } from "./parse-binary-expression";
+import { parseIdentifier } from "./parse-identifier";
 import { parseMemberExpression } from "./parse-member-expression";
 import { parseObjectExpression } from "./parse-object-expression";
 import { parseTemplateLiteral } from "./parse-template-literal";
 
 export function parseObjectPropertyValue(expr: Expression | PatternLike, depth: number): Content {
   if (expr.type === "Identifier") {
-    const id = v4();
-
-    return {
-      args: [
-        {
-          type: "Identifier",
-          id,
-          value: expr.name,
-        },
-      ],
-      text: id,
-    };
+    return parseIdentifier(expr);
   }
 
   if (expr.type === "StringLiteral") {

@@ -9,7 +9,8 @@ export type ContentArg =
   ContentArgExpression |
   ContentArgObjectExpression |
   ContentArgTemplateLiteral |
-  ContentArgCallExpressionMapJSXElement;
+  ContentArgMacroMap |
+  ContentArgMacroJson;
 
 export interface ContentArgArrayExpression {
   type: "ArrayExpression";
@@ -41,12 +42,21 @@ export interface ContentArgTemplateLiteral {
   value: Content;
 }
 
-export interface ContentArgCallExpressionMapJSXElement {
-  type: "CallExpressionMapJSXElement";
+export interface ContentArgMacroMap {
+  type: "MacroMap";
   id: string;
   value: {
     items: string;
     item: string;
     content: Content;
+  };
+}
+
+export interface ContentArgMacroJson {
+  type: "MacroJson";
+  id: string;
+  value: {
+    item: string;
+    pretty: boolean;
   };
 }

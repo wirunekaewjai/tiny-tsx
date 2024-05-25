@@ -86,11 +86,21 @@ function buildContentObject(content: Content) {
     }
 
     else if (arg.type === "ArrayExpression") {
-      args.push(`esc_quot(&${buildContent(arg.value)})`);
+      args.push(`tsx_quot(&${buildContent(arg.value)})`);
     }
 
-    else if (arg.type === "CallExpressionMapJSXElement") {
-      args.push(`render_array(${arg.value.items}, &|${arg.value.item}| ${buildContent(arg.value.content)})`);
+    else if (arg.type === "MacroMap") {
+      args.push(`tsx_map(${arg.value.items}, &|${arg.value.item}| ${buildContent(arg.value.content)})`);
+    }
+
+    else if (arg.type === "MacroJson") {
+      if (arg.value.pretty) {
+        args.push(`tsx_json_pretty(${arg.value.item})`);
+      }
+
+      else {
+        args.push(`tsx_json(${arg.value.item})`);
+      }
     }
 
     else {
@@ -98,7 +108,7 @@ function buildContentObject(content: Content) {
     }
   });
 
-  return `esc_quot(&format!(r#"{${text}}"#, ${args.join(", ")}))`;
+  return `tsx_quot(&format!(r#"{${text}}"#, ${args.join(", ")}))`;
 }
 
 function buildContent(content: Content) {
@@ -122,11 +132,21 @@ function buildContent(content: Content) {
     }
 
     else if (arg.type === "ArrayExpression") {
-      args.push(`esc_quot(&${buildContent(arg.value)})`);
+      args.push(`tsx_quot(&${buildContent(arg.value)})`);
     }
 
-    else if (arg.type === "CallExpressionMapJSXElement") {
-      args.push(`render_array(${arg.value.items}, &|${arg.value.item}| ${buildContent(arg.value.content)})`);
+    else if (arg.type === "MacroMap") {
+      args.push(`tsx_map(${arg.value.items}, &|${arg.value.item}| ${buildContent(arg.value.content)})`);
+    }
+
+    else if (arg.type === "MacroJson") {
+      if (arg.value.pretty) {
+        args.push(`tsx_json_pretty(${arg.value.item})`);
+      }
+
+      else {
+        args.push(`tsx_json(${arg.value.item})`);
+      }
     }
 
     else {
@@ -140,12 +160,20 @@ function buildContent(content: Content) {
 function buildImports(content: string) {
   const uses: string[] = [];
 
-  if (content.includes("esc_quot(")) {
-    uses.push("esc_quot");
+  if (content.includes("tsx_json_pretty(")) {
+    uses.push("tsx_json_pretty");
   }
 
-  if (content.includes("render_array(")) {
-    uses.push("render_array");
+  if (content.includes("tsx_json(")) {
+    uses.push("tsx_json");
+  }
+
+  if (content.includes("tsx_map(")) {
+    uses.push("tsx_map");
+  }
+
+  if (content.includes("tsx_quot(")) {
+    uses.push("tsx_quot");
   }
 
   if (uses.length === 0) {

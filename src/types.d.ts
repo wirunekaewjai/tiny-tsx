@@ -14,5 +14,8 @@ export declare global {
   export type f32 = number;
   export type f64 = number;
 
-  export declare function map<T>(items: T[], render: (item: T) => string): string;
+  export declare function json<T>(item: T): string;
+  export declare function json_pretty<T>(item: T): string;
+
+  export declare function map<T>(items: T[], render: (item: T) => object | string): string;
 }

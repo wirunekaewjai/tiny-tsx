@@ -1,11 +1,15 @@
-export function esc_quot(input: string) {
-  return input.replace(/"/g, "&quot;");
+export function tsx_quot(value: string): string {
+  return value.replace(/"/g, "&quot;");
 }
 
-export function render_array<T>(items: T[], render: (item: T) => string): string {
+export function tsx_map<T>(items: T[], render: (item: T) => string): string {
   return items.map(render).join("");
 }
 
-// export function json(input: unknown) {
-//   return JSON.stringify(input).replace(/"/g, "&quot;");
-// }
+export function tsx_json<T>(item: T): string {
+  return tsx_quot(JSON.stringify(item));
+}
+
+export function tsx_json_pretty<T>(item: T): string {
+  return tsx_quot(JSON.stringify(item, null, 2));
+}
