@@ -51,6 +51,30 @@ function buildParams(params: FunctionParam[]) {
   return `(${items.join(", ")})`;
 }
 
+function buildContentObject(content: Content) {
+  const args: string[] = [];
+
+  let text = content.text;
+
+  content.args.forEach((arg) => {
+    text = text.replace(arg.id, "{}");
+
+    if (arg.type === "Identifier" || arg.type === "Expression") {
+      args.push(arg.value);
+    }
+
+    else if (arg.type === "TemplateLiteral") {
+      args.push(buildContent(arg.value));
+    }
+
+    else {
+      args.push(buildContentObject(arg.value));
+    }
+  });
+
+  return `esc_quot(format!(r#"{${text}}"#, ${args.join(", ")}))`;
+}
+
 function buildContent(content: Content) {
   const args: string[] = [];
 
@@ -65,6 +89,10 @@ function buildContent(content: Content) {
 
     else if (arg.type === "TemplateLiteral") {
       args.push(buildContent(arg.value));
+    }
+
+    else if (arg.type === "ObjectExpression") {
+      args.push(buildContentObject(arg.value));
     }
 
     else {
