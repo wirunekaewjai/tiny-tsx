@@ -15,7 +15,7 @@ import type { Config } from "./types/config";
 export async function parse(srcDir: string, configs: Config[]) {
   const startAt = Date.now();
   const srcFilePaths = glob(srcDir, ".tsx");
-  const srcData: Record<string, Parser.ParseResult<File>> = {};
+  const srcData: Record<string, [string, Parser.ParseResult<File>]> = {};
 
   for (const srcFilePath of srcFilePaths) {
     const input = await Bun.file(path.join(srcDir, srcFilePath)).text();
@@ -27,18 +27,14 @@ export async function parse(srcDir: string, configs: Config[]) {
       ],
     });
 
-    srcData[srcFilePath] = file;
+    srcData[srcFilePath] = [input, file];
   }
 
   for (const config of configs) {
     const outDir = config.dir;
     const outExt = config.ext;
-    const namespace = config.namespace ?? "";
 
     const isRust = outExt === ".rs";
-    const isTs = outExt === ".ts";
-
-    const macros: string[] = [];
 
     for (const srcFilePath of srcFilePaths) {
       const srcPathObj = path.parse(srcFilePath);
@@ -53,7 +49,7 @@ export async function parse(srcDir: string, configs: Config[]) {
 
       try {
         const data = srcData[srcFilePath];
-        const code = await build(srcFilePath, data, config);
+        const code = await build(srcFilePath, data[1], config);
 
         if (!code) {
           if (exists) {
@@ -74,7 +70,8 @@ export async function parse(srcDir: string, configs: Config[]) {
           recursive: true,
         });
 
-        const output = "// AUTO GENERATED\n" + code;
+        const attach = config.attachOriginal ? `\n/*\n=== original: ${srcFilePath} ===\n\n${data[0]}\n*/` : "";
+        const output = "// AUTO GENERATED\n" + code + attach;
         await writeFile(outPath, output, "utf8");
 
         if (exists) {
@@ -82,14 +79,6 @@ export async function parse(srcDir: string, configs: Config[]) {
         } else {
           console.log(styleText("green", `+ ${outPath}`));
         }
-
-        // result.macros.forEach((macro) => {
-        //   if (macros.includes(macro)) {
-        //     return;
-        //   }
-
-        //   macros.push(macro);
-        // });
       } catch (err) {
         console.log(styleText("red", `! ${outPath}`));
         console.log(err);
@@ -97,12 +86,7 @@ export async function parse(srcDir: string, configs: Config[]) {
       }
     }
 
-    // if (isTs) {
-    //   await generateTypescriptMacros(outDir, macros);
-    // }
-
     if (isRust) {
-      //   await generateRustMacros(outDir, macros);
       await generateRustModules(outDir, startAt);
     }
 
