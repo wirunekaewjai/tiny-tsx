@@ -141,11 +141,11 @@ function buildContent(content: Content) {
 
     else if (arg.type === "MacroJson") {
       if (arg.value.pretty) {
-        args.push(`tsx_json_pretty(${arg.value.item})`);
+        args.push(`tsx_json_pretty(serde_json::json!(${arg.value.item}))`);
       }
 
       else {
-        args.push(`tsx_json(${arg.value.item})`);
+        args.push(`tsx_json(serde_json::json!(${arg.value.item}))`);
       }
     }
 
