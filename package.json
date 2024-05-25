@@ -1,22 +1,22 @@
 {
-  "name": "@wirunekaewjai/ts",
-  "version": "0.0.3",
+  "name": "@wirunekaewjai/tiny-tsx",
+  "version": "0.1.0",
   "type": "module",
   "exports": {
-    "./jsx-dev-runtime": "./src/jsx/jsx-dev-runtime.ts",
-    "./jsx-runtime": "./src/jsx/jsx-runtime.ts",
+    "./jsx": "./src/jsx/types.ts",
+    "./jsx/jsx-dev-runtime": "./src/jsx/jsx-dev-runtime.ts",
+    "./jsx/jsx-runtime": "./src/jsx/jsx-runtime.ts",
     "./macro": "./src/macro-ts/index.ts",
-    "./parser": "./src/parser/index.ts",
-    "./types.d.ts": "./src/types.d.ts"
+    "./parser": "./src/parser/index.ts"
   },
   "devDependencies": {
-    "@babel/parser": "^7.24.6",
     "@babel/types": "^7.24.6",
     "@types/bun": "latest",
-    "@types/uuid": "^9.0.8",
-    "uuid": "^9.0.1"
+    "@types/uuid": "^9.0.8"
   },
   "peerDependencies": {
-    "typescript": "^5.0.0"
+    "@babel/parser": "^7.24.6",
+    "typescript": "^5.0.0",
+    "uuid": "^9.0.1"
   }
 }
