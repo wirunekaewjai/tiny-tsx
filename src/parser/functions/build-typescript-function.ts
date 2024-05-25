@@ -25,7 +25,11 @@ function getType(input: string) {
 }
 
 function buildInterfaceProperty(property: StructProperty) {
-  return `  ${property.name}: ${getType(property.type)};`;
+  const isArray = property.type.endsWith("[]");
+  const parsedType = isArray ? getType(property.type.slice(0, -2)) : getType(property.type);
+  const wrappedType = isArray ? `${parsedType}[]` : parsedType;
+
+  return `  ${property.name}: ${wrappedType};`;
 }
 
 function buildInterfaces(structs: Struct[]) {
@@ -40,7 +44,11 @@ function buildInterfaces(structs: Struct[]) {
 
 function buildParams(params: FunctionParam[]) {
   const items = params.map((param) => {
-    return `${param.name}: ${getType(param.type)}`;
+    const isArray = param.type.endsWith("[]");
+    const parsedType = isArray ? getType(param.type.slice(0, -2)) : getType(param.type);
+    const wrappedType = isArray ? `${parsedType}[]` : parsedType;
+
+    return `${param.name}: ${wrappedType}`;
   });
 
   return `(${items.join(", ")})`;
@@ -59,8 +67,16 @@ function buildContent(content: Content) {
       text = text.replace(arg.id, `"${buildContent(arg.value)}"`);
     }
 
-    else {
+    else if (arg.type === "ObjectExpression" || arg.type === "ArrayExpression") {
       text = text.replace(arg.id, `\${esc_quot(\`${buildContent(arg.value)}\`)}`);
+    }
+
+    else if (arg.type === "CallExpressionMapJSXElement") {
+      text = text.replace(arg.id, `\${map(${arg.value.items}, (${arg.value.item}) => \`${buildContent(arg.value.content)}\`)}`);
+    }
+
+    else {
+      throw `${__filename}: ${JSON.stringify(arg)}`;
     }
   });
 

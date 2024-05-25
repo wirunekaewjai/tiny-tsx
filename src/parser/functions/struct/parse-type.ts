@@ -38,5 +38,13 @@ export function parseType(fileName: string, type: TSType) {
     return "boolean";
   }
 
+  if (type.type === "TSNumberKeyword") {
+    return "number";
+  }
+
+  if (type.type === "TSArrayType") {
+    return `${parseType(fileName, type.elementType)}[]`;
+  }
+
   throw `${__filename}: ${JSON.stringify(type)}`;
 }

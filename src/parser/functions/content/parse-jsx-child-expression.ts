@@ -1,8 +1,9 @@
-import type { Expression, JSXEmptyExpression } from "@babel/types";
+import type { ArrowFunctionExpression, Expression, Identifier, JSXEmptyExpression } from "@babel/types";
 import { v4 } from "uuid";
 import type { Content } from "../../types/content";
 import { parseArrayExpression } from "./parse-array-expression";
 import { parseBinaryExpression } from "./parse-binary-expression";
+import { parseJsxElement } from "./parse-jsx-element";
 import { parseMemberExpression } from "./parse-member-expression";
 import { parseObjectExpression } from "./parse-object-expression";
 import { parseTemplateLiteral } from "./parse-template-literal";
@@ -67,6 +68,41 @@ export function parseJsxChildExpression(expr: Expression | JSXEmptyExpression): 
       ],
       text: id,
     };
+  }
+
+  if (expr.type === "CallExpression") {
+    const callee = expr.callee;
+    const args = expr.arguments;
+
+    if (callee.type === "Identifier") {
+      if (callee.name === "map") {
+        const arg0 = args[0] as Identifier;
+        const arg0Name = arg0.name;
+
+        const arg1 = args[1] as ArrowFunctionExpression;
+        const arg1Param = arg1.params[0] as Identifier;
+
+        if (arg1.body.type === "JSXElement") {
+          const content = parseJsxElement(arg1.body);
+          const id = v4();
+
+          return {
+            args: [
+              {
+                type: "CallExpressionMapJSXElement",
+                id,
+                value: {
+                  items: arg0Name,
+                  item: arg1Param.name,
+                  content,
+                },
+              }
+            ],
+            text: id,
+          };
+        }
+      }
+    }
   }
 
   throw `${__filename}: ${JSON.stringify(expr)}`;

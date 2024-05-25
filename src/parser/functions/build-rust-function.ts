@@ -11,6 +11,9 @@ function getStructType(input: string) {
     case "string":
       return "String";
 
+    case "number":
+      return "f64";
+
     default:
       return input;
   }
@@ -24,13 +27,20 @@ function getParamType(input: string) {
     case "string":
       return "&str";
 
+    case "number":
+      return "f64";
+
     default:
       return input;
   }
 }
 
 function buildInterfaceProperty(property: StructProperty) {
-  return `    pub ${property.name}: ${getStructType(property.type)},`;
+  const isArray = property.type.endsWith("[]");
+  const parsedType = isArray ? getStructType(property.type.slice(0, -2)) : getStructType(property.type);
+  const wrappedType = isArray ? `Vec<${parsedType}>` : parsedType;
+
+  return `    pub ${property.name}: ${wrappedType},`;
 }
 
 function buildInterfaces(structs: Struct[]) {
@@ -45,7 +55,11 @@ function buildInterfaces(structs: Struct[]) {
 
 function buildParams(params: FunctionParam[]) {
   const items = params.map((param) => {
-    return `${param.name}: ${getParamType(param.type)}`;
+    const isArray = param.type.endsWith("[]");
+    const parsedType = isArray ? getParamType(param.type.slice(0, -2)) : getParamType(param.type);
+    const wrappedType = isArray ? `Vec<${parsedType}>` : parsedType;
+
+    return `${param.name}: ${wrappedType}`;
   });
 
   return `(${items.join(", ")})`;
@@ -71,8 +85,16 @@ function buildContentObject(content: Content) {
       args.push(buildContentObject(arg.value));
     }
 
-    else {
+    else if (arg.type === "ArrayExpression") {
       args.push(`esc_quot(&${buildContent(arg.value)})`);
+    }
+
+    else if (arg.type === "CallExpressionMapJSXElement") {
+      args.push(`map(${arg.value.items}, &|${arg.value.item}| ${buildContent(arg.value.content)})`);
+    }
+
+    else {
+      throw `${__filename}: ${JSON.stringify(arg)}`;
     }
   });
 
@@ -99,8 +121,16 @@ function buildContent(content: Content) {
       args.push(buildContentObject(arg.value));
     }
 
-    else {
+    else if (arg.type === "ArrayExpression") {
       args.push(`esc_quot(&${buildContent(arg.value)})`);
+    }
+
+    else if (arg.type === "CallExpressionMapJSXElement") {
+      args.push(`map(${arg.value.items}, &|${arg.value.item}| ${buildContent(arg.value.content)})`);
+    }
+
+    else {
+      throw `${__filename}: ${JSON.stringify(arg)}`;
     }
   });
 
@@ -112,6 +142,10 @@ function buildImports(content: string) {
 
   if (content.includes("esc_quot(")) {
     lines.push(`use tiny_tsx::esc_quot;\n`);
+  }
+
+  if (content.includes("map(")) {
+    lines.push(`use tiny_tsx::map;\n`);
   }
 
   const suffix = lines.length > 0 ? "\n" : "";
