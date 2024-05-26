@@ -4,6 +4,25 @@ import { parseJsxAttribute } from "./parse-jsx-attribute";
 import { parseJsxChild } from "./parse-jsx-child";
 import { parseJsxElementName } from "./parse-jsx-element-name";
 
+const SELF_CLOSING_TAGS = new Set([
+  "area",
+  "base",
+  "br",
+  "col",
+  "command",
+  "embed",
+  "hr",
+  "img",
+  "input",
+  "keygen",
+  "link",
+  "meta",
+  "param",
+  "source",
+  "track",
+  "wbr"
+]);
+
 export function parseJsxElement(stmt: JSXElement): Content {
   const result: Content = {
     args: [],
@@ -24,7 +43,7 @@ export function parseJsxElement(stmt: JSXElement): Content {
 
   result.text += ">";
 
-  if (!open.selfClosing) {
+  if (!SELF_CLOSING_TAGS.has(name)) {
     stmt.children.forEach((child) => {
       const out = parseJsxChild(child);
 
