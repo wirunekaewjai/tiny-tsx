@@ -3,6 +3,7 @@ import { v4 } from "uuid";
 import type { Content } from "../../types/content";
 import { parseArrayExpression } from "./parse-array-expression";
 import { parseBinaryExpression } from "./parse-binary-expression";
+import { parseCallExpression } from "./parse-call-expression";
 import { parseIdentifier } from "./parse-identifier";
 import { parseMemberExpression } from "./parse-member-expression";
 import { parseObjectExpression } from "./parse-object-expression";
@@ -56,6 +57,10 @@ export function parseObjectPropertyValue(expr: Expression | PatternLike, depth: 
       ],
       text: id,
     };
+  }
+
+  if (expr.type === "CallExpression") {
+    return parseCallExpression(expr);
   }
 
   throw `${__filename}: ${JSON.stringify(expr)}`;

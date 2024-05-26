@@ -9,12 +9,21 @@ export declare global {
   export type u32 = number;
   export type u64 = number;
 
-  export type f8 = number;
-  export type f16 = number;
   export type f32 = number;
   export type f64 = number;
 
+  /** derive serde::Serialize in Rust */
+  export type Serialize = {};
+
+  /** join array to string */
   export declare function join<T>(items: T[]): string;
+
+  /** JSON stringify + escape quote for html rendering */
+  export declare function json<T extends Serialize>(value: T): string;
+
+  /** render array and join to string */
   export declare function map<T>(items: T[], render: (item: T) => object | string): string;
+
+  /** replace double quote with &quot; */
   export declare function quot(item: string): string;
 }

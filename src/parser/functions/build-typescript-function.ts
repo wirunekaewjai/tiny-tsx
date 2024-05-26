@@ -75,6 +75,17 @@ function buildContent(content: Content) {
       text = text.replace(arg.id, `\${tsx_join(${arg.value})}`);
     }
 
+    else if (arg.type === "MacroJson") {
+      text = text.replace(arg.id, `\${tsx_json(${arg.value.item})}`);
+      // if (arg.value.pretty) {
+      //   text = text.replace(arg.id, `\${tsx_json_pretty(${arg.value.item})}`);
+      // }
+
+      // else {
+      //   text = text.replace(arg.id, `\${tsx_json(${arg.value.item})}`);
+      // }
+    }
+
     else if (arg.type === "MacroMap") {
       text = text.replace(arg.id, `\${tsx_map(${arg.value.items}, (${arg.value.item}) => \`${buildContent(arg.value.content)}\`)}`);
     }
@@ -96,6 +107,10 @@ function buildImports(content: string) {
 
   if (content.includes("tsx_join(")) {
     uses.push("tsx_join");
+  }
+
+  if (content.includes("tsx_json(")) {
+    uses.push("tsx_json");
   }
 
   if (content.includes("tsx_map(")) {

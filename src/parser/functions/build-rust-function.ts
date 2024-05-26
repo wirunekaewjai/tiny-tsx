@@ -3,6 +3,16 @@ import type { FunctionParam } from "../types/param";
 import type { Struct, StructProperty } from "../types/struct";
 import { toLowerSnakeCase } from "./to-lower-snake-case";
 
+function getDerivePath(input: string) {
+  switch (input) {
+    case "Serialize":
+      return "serde::Serialize";
+
+    default:
+      return null;
+  }
+}
+
 function getStructType(input: string) {
   switch (input) {
     case "boolean":
@@ -43,10 +53,29 @@ function buildInterfaceProperty(property: StructProperty) {
   return `    pub ${property.name}: ${wrappedType},`;
 }
 
+function buildInterfaceDeriveds(deriveds: string[]) {
+  const items: string[] = [];
+
+  deriveds.forEach((d) => {
+    const p = getDerivePath(d);
+
+    if (p) {
+      items.push(p);
+    }
+  });
+
+  if (items.length === 0) {
+    return "";
+  }
+
+  return `#[derive(${items.join(", ")})]\n`;
+}
+
 function buildInterfaces(structs: Struct[]) {
   const items = structs.map((struct) => {
+    const derive = buildInterfaceDeriveds(struct.deriveds);
     const properties = struct.properties.map(buildInterfaceProperty);
-    return `pub struct ${struct.name} {\n${properties.join("\n")}\n}\n`;
+    return `${derive}pub struct ${struct.name} {\n${properties.join("\n")}\n}\n`;
   });
 
   const suffix = items.length > 0 ? "\n" : "";
@@ -93,6 +122,17 @@ function buildContentObject(content: Content) {
       args.push(`tsx_join(&${arg.value})`);
     }
 
+    else if (arg.type === "MacroJson") {
+      args.push(`tsx_json(&${arg.value.item})`);
+      // if (arg.value.pretty) {
+      //   args.push(`tsx_json_pretty(&${arg.value.item})`);
+      // }
+
+      // else {
+      //   args.push(`tsx_json(&${arg.value.item})`);
+      // }
+    }
+
     else if (arg.type === "MacroMap") {
       args.push(`tsx_map(&${arg.value.items}, &|${arg.value.item}| ${buildContent(arg.value.content)})`);
     }
@@ -137,6 +177,17 @@ function buildContent(content: Content) {
       args.push(`tsx_join(&${arg.value})`);
     }
 
+    else if (arg.type === "MacroJson") {
+      args.push(`tsx_json(&${arg.value.item})`);
+      // if (arg.value.pretty) {
+      //   args.push(`tsx_json_pretty(&${arg.value.item})`);
+      // }
+
+      // else {
+      //   args.push(`tsx_json(&${arg.value.item})`);
+      // }
+    }
+
     else if (arg.type === "MacroMap") {
       args.push(`tsx_map(&${arg.value.items}, &|${arg.value.item}| ${buildContent(arg.value.content)})`);
     }
@@ -158,6 +209,10 @@ function buildImports(content: string) {
 
   if (content.includes("tsx_join(")) {
     uses.push("tsx_join");
+  }
+
+  if (content.includes("tsx_json(")) {
+    uses.push("tsx_json");
   }
 
   if (content.includes("tsx_map(")) {
