@@ -108,6 +108,10 @@ function buildImports(content: string) {
     uses.push("tsx_join");
   }
 
+  if (content.includes("tsx_json_pretty(")) {
+    uses.push("tsx_json_pretty");
+  }
+
   if (content.includes("tsx_json(")) {
     uses.push("tsx_json");
   }
