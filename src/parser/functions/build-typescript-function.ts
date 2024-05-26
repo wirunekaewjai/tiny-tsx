@@ -76,14 +76,13 @@ function buildContent(content: Content) {
     }
 
     else if (arg.type === "MacroJson") {
-      text = text.replace(arg.id, `\${tsx_json(${arg.value.item})}`);
-      // if (arg.value.pretty) {
-      //   text = text.replace(arg.id, `\${tsx_json_pretty(${arg.value.item})}`);
-      // }
+      if (arg.value.pretty) {
+        text = text.replace(arg.id, `\${tsx_json_pretty(${arg.value.item})}`);
+      }
 
-      // else {
-      //   text = text.replace(arg.id, `\${tsx_json(${arg.value.item})}`);
-      // }
+      else {
+        text = text.replace(arg.id, `\${tsx_json(${arg.value.item})}`);
+      }
     }
 
     else if (arg.type === "MacroMap") {

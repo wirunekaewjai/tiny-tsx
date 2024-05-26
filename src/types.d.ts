@@ -19,6 +19,7 @@ export declare global {
   export declare function join<T>(items: T[]): string;
 
   /** JSON stringify + escape quote for html rendering */
+  export declare function json_pretty<T extends Serialize>(value: T): string;
   export declare function json<T extends Serialize>(value: T): string;
 
   /** render array and join to string */

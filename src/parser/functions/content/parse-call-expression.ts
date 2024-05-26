@@ -26,7 +26,7 @@ export function parseCallExpression(expr: CallExpression): Content {
       };
     }
 
-    if (callee.name === "json") {
+    if (callee.name === "json" || callee.name === "json_pretty") {
       const id = v4();
 
       return {
@@ -36,7 +36,7 @@ export function parseCallExpression(expr: CallExpression): Content {
             id,
             value: {
               item: parseCallExpressionMacroJson(args[0]),
-              // pretty: callee.name === "json_pretty",
+              pretty: callee.name === "json_pretty",
             },
           }
         ],

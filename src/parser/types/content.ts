@@ -55,6 +55,7 @@ export interface ContentArgMacroJson {
   id: string;
   value: {
     item: string;
+    pretty: boolean;
   };
 }
 

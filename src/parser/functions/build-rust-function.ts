@@ -123,14 +123,13 @@ function buildContentObject(content: Content) {
     }
 
     else if (arg.type === "MacroJson") {
-      args.push(`tsx_json(&${arg.value.item})`);
-      // if (arg.value.pretty) {
-      //   args.push(`tsx_json_pretty(&${arg.value.item})`);
-      // }
+      if (arg.value.pretty) {
+        args.push(`tsx_json_pretty(&${arg.value.item})`);
+      }
 
-      // else {
-      //   args.push(`tsx_json(&${arg.value.item})`);
-      // }
+      else {
+        args.push(`tsx_json(&${arg.value.item})`);
+      }
     }
 
     else if (arg.type === "MacroMap") {
@@ -178,14 +177,13 @@ function buildContent(content: Content) {
     }
 
     else if (arg.type === "MacroJson") {
-      args.push(`tsx_json(&${arg.value.item})`);
-      // if (arg.value.pretty) {
-      //   args.push(`tsx_json_pretty(&${arg.value.item})`);
-      // }
+      if (arg.value.pretty) {
+        args.push(`tsx_json_pretty(&${arg.value.item})`);
+      }
 
-      // else {
-      //   args.push(`tsx_json(&${arg.value.item})`);
-      // }
+      else {
+        args.push(`tsx_json(&${arg.value.item})`);
+      }
     }
 
     else if (arg.type === "MacroMap") {
@@ -209,6 +207,10 @@ function buildImports(content: string) {
 
   if (content.includes("tsx_join(")) {
     uses.push("tsx_join");
+  }
+
+  if (content.includes("tsx_json_pretty(")) {
+    uses.push("tsx_json_pretty");
   }
 
   if (content.includes("tsx_json(")) {
