@@ -1,6 +1,6 @@
 import type { TSType } from "@babel/types";
-import { parseTypeReferenceName } from "./parse-type-reference-name";
 import { toPascalCase } from "../to-pascal-case";
+import { parseTypeReferenceName } from "./parse-type-reference-name";
 
 const PRIMITIVE_TYPES = [
   "i8",
@@ -13,13 +13,11 @@ const PRIMITIVE_TYPES = [
   "u32",
   "u64",
 
-  "f8",
-  "f16",
   "f32",
   "f64",
 ];
 
-export function parseType(fileName: string, type: TSType) {
+export function parseType(fileName: string, type: TSType): string {
   if (type.type === "TSTypeReference") {
     const name = parseTypeReferenceName(type.typeName);
 

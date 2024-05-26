@@ -1,6 +1,6 @@
 import type { Expression } from "@babel/types";
 
-export function parsePropertyKey(expr: Expression) {
+export function parsePropertyKey(expr: Expression): string {
   if (expr.type === "Identifier") {
     return expr.name;
   }

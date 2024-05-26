@@ -9,12 +9,12 @@ function getType(input: string) {
     case "i16":
     case "i32":
     case "i64":
+
     case "u8":
     case "u16":
     case "u32":
     case "u64":
-    case "f8":
-    case "f16":
+
     case "f32":
     case "f64":
       return "number";

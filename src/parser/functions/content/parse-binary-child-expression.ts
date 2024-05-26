@@ -1,7 +1,7 @@
 import type { Expression, PrivateName } from "@babel/types";
 import { parseMemberExpression } from "./parse-member-expression";
 
-export function parseBinaryChildExpression(expr: Expression | PrivateName) {
+export function parseBinaryChildExpression(expr: Expression | PrivateName): string {
   if (expr.type === "Identifier") {
     return expr.name;
   }

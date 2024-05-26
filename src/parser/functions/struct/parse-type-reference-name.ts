@@ -1,6 +1,6 @@
 import type { TSEntityName } from "@babel/types";
 
-export function parseTypeReferenceName(entity: TSEntityName) {
+export function parseTypeReferenceName(entity: TSEntityName): string {
   if (entity.type === "Identifier") {
     return entity.name;
   }
