@@ -13,7 +13,7 @@ export function parseJsxAttributeValue(value: JSXElement | JSXFragment | StringL
   if (value.type === "StringLiteral") {
     return {
       args: [],
-      text: '="' + value.value + '"',
+      text: '="' + value.value.replaceAll("#", "&num;") + '"',
     };
   }
 
